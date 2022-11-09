@@ -1,7 +1,4 @@
 
-    /*
-   * Settings
-   */
     var settings = {
       particles: {
         length: 2000, // maximum amount of particles
@@ -11,9 +8,6 @@
         size: 13, // particle size in pixels
       },
     };
-    /*
-     * RequestAnimationFrame polyfill by Erik Möller
-     */
     (function () {var b = 0; var c = ["ms", "moz", "webkit", "o"]; for (var a = 0; a < c.length && !window.requestAnimationFrame; ++a) {window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"]; window.cancelAnimationFrame = window[c[a] + "CancelAnimationFrame"] || window[c[a] + "CancelRequestAnimationFrame"]} if (!window.requestAnimationFrame) {window.requestAnimationFrame = function (h, e) {var d = new Date().getTime(); var f = Math.max(0, 16 - (d - b)); var g = window.setTimeout(function () {h(d + f)}, f); b = d + f; return g}} if (!window.cancelAnimationFrame) {window.cancelAnimationFrame = function (d) {clearTimeout(d)}} }());
     /*
      * Point class
@@ -88,7 +82,6 @@
         duration = settings.particles.duration;
 
       function ParticlePool(length) {
-        // create and populate particle pool
         particles = new Array(length);
         for (var i = 0; i < particles.length; i++)
           particles[i] = new Particle();
@@ -96,7 +89,6 @@
       ParticlePool.prototype.add = function (x, y, dx, dy) {
         particles[firstFree].initialize(x, y, dx, dy);
 
-        // handle circular queue
         firstFree++;
         if (firstFree == particles.length) firstFree = 0;
         if (firstActive == firstFree) firstActive++;
@@ -105,7 +97,6 @@
       ParticlePool.prototype.update = function (deltaTime) {
         var i;
 
-        // update active particles
         if (firstActive < firstFree) {
           for (i = firstActive; i < firstFree; i++)
             particles[i].update(deltaTime);
@@ -117,7 +108,7 @@
             particles[i].update(deltaTime);
         }
 
-        // remove inactive particles
+
         while (particles[firstActive].age >= duration && firstActive != firstFree) {
           firstActive++;
           if (firstActive == particles.length) firstActive = 0;
@@ -126,7 +117,7 @@
 
       };
       ParticlePool.prototype.draw = function (context, image) {
-        // draw active particles
+
         if (firstActive < firstFree) {
           for (i = firstActive; i < firstFree; i++)
             particles[i].draw(context, image);
@@ -140,16 +131,13 @@
       };
       return ParticlePool;
     })();
-    /*
-     * Putting it all together
-     */
+
     (function (canvas) {
       var context = canvas.getContext('2d'),
         particles = new ParticlePool(settings.particles.length),
         particleRate = settings.particles.length / settings.particles.duration, // particles/sec
         time;
 
-      // get point on heart with -PI <= t <= PI
       function pointOnHeart(t) {
         return new Point(
           160 * Math.pow(Math.sin(t), 3),
@@ -157,7 +145,6 @@
         );
       }
 
-      // creating the particle image using a dummy canvas
       var image = (function () {
         var canvas = document.createElement('canvas'),
           context = canvas.getContext('2d');
